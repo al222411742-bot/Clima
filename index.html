@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#101828">
+    <meta name="description" content="Consulta el clima y explora ubicaciones en un mapa interactivo.">
+
+    <title>Mapa Meteorológico</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body class="weather-default">
+
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar">
+        <a class="brand" href="#" aria-label="Atmos, inicio">
+            <span class="brand-icon">☼</span>
+            <span>Karen Hernandez Saladino Clima<span class="brand-dot">.</span></span>
+        </a>
+
+        <div class="topbar-right">
+            <span class="live-dot"></span>
+            <span>MAPA METEOROLÓGICO</span>
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <section class="intro">
+            <p class="eyebrow">TU MUNDO, EN TIEMPO REAL</p>
+            <h1>El clima de <span>cualquier lugar.</span></h1>
+            <p class="intro-description">
+                Explora ciudades, descubre su ubicación y consulta
+                las condiciones meteorológicas actuales.
+            </p>
+        </section>
+
+        <section class="search-panel" aria-label="Buscar ubicación">
+            <div class="search-icon" aria-hidden="true">⌕</div>
+
+            <input
+                type="search"
+                id="city-input"
+                placeholder="Busca una ciudad, estado o país..."
+                aria-label="Nombre de la ubicación"
+                autocomplete="off"
+            >
+
+            <button id="search-btn" type="button">
+                <span id="button-text">Explorar</span>
+                <span aria-hidden="true">🗺</span>
+            </button>
+        </section>
+
+        <p class="search-hint">
+            <span>★</span>
+            Prueba con Lerma, Ciudad de México, Madrid o Tokio
+        </p>
+
+        <p id="status-message" class="status-message" role="status" aria-live="polite">
+            Escribe una ubicación para comenzar tu exploración.
+        </p>
+
+        <section id="weather-dashboard" class="weather-dashboard" hidden>
+
+            <div class="weather-layout">
+
+                <article class="weather-hero">
+                    <div class="hero-top">
+                        <div>
+                            <p class="card-label">CONDICIONES ACTUALES</p>
+                            <h2 id="location-name">Tu ubicación</h2>
+                            <p id="location-description" class="location-description">
+                                Consultando ubicación...
+                            </p>
+                        </div>
+
+                        <div id="weather-icon" class="weather-icon" aria-hidden="true">
+                            🌤️
+                        </div>
+                    </div>
+
+                    <div class="temperature-row">
+                        <span id="temperature" class="temperature">--</span>
+                        <span class="temperature-unit">°C</span>
+                    </div>
+
+                    <h3 id="weather-condition" class="weather-condition">
+                        Esperando datos
+                    </h3>
+
+                    <p id="feels-like" class="feels-like">
+                        Sensación térmica: -- °C
+                    </p>
+
+                    <div class="hero-footer">
+                        <span>★ Datos meteorológicos</span>
+                        <span id="weather-time">Hora local: --</span>
+                    </div>
+                </article>
+
+                <article class="details-card">
+                    <div class="section-heading">
+                        <div>
+                            <p class="card-label">RESUMEN</p>
+                            <h3>Detalles del clima</h3>
+                        </div>
+                        <span class="details-symbol">◈</span>
+                    </div>
+
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <span class="metric-icon">💧</span>
+                            <span class="metric-label">Humedad</span>
+                            <strong id="humidity">--%</strong>
+                            <span class="metric-note">Humedad relativa</span>
+                        </div>
+
+                        <div class="metric">
+                            <span class="metric-icon">💨</span>
+                            <span class="metric-label">Viento</span>
+                            <strong id="wind-speed">-- <small>km/h</small></strong>
+                            <span class="metric-note">Velocidad actual</span>
+                        </div>
+
+                        <div class="metric">
+                            <span class="metric-icon">🌡️</span>
+                            <span class="metric-label">Sensación térmica</span>
+                            <strong id="apparent-temperature">--°</strong>
+                            <span class="metric-note">Temperatura aparente</span>
+                        </div>
+
+                        <div class="metric">
+                            <span class="metric-icon">☁️</span>
+                            <span class="metric-label">Nubosidad</span>
+                            <strong id="cloud-cover">--%</strong>
+                            <span class="metric-note">Cobertura de nubes</span>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <section class="map-section">
+                <div class="map-heading">
+                    <div>
+                        <p class="card-label">EXPLORACIÓN GEOGRÁFICA</p>
+                        <h2>Encuentra el lugar en el mapa</h2>
+                        <p class="map-subtitle">
+                            Explora la zona y acerca el mapa para ver más detalles.
+                        </p>
+                    </div>
+
+                    <span class="map-badge">
+                        <span class="live-dot"></span>
+                        MAPA INTERACTIVO
+                    </span>
+                </div>
+
+                <div id="map" aria-label="Mapa interactivo de la ubicación"></div>
+
+                <div class="coordinates">
+                    <div>
+                        <span>LATITUD</span>
+                        <strong id="latitude">--</strong>
+                    </div>
+
+                    <div>
+                        <span>LONGITUD</span>
+                        <strong id="longitude">--</strong>
+                    </div>
+
+                    <a
+                        id="open-map-link"
+                        href="https://www.openstreetmap.org/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Abrir mapa ↗
+                    </a>
+                </div>
+
+                <p class="map-attribution">
+                    © OpenStreetMap contributors · Mapa con Leaflet
+                </p>
+            </section>
+
+            <footer class="data-footer">
+                <span>☼ KHS.</span>
+                <span>Geografía: OpenStreetMap / Nominatim</span>
+                <span>Clima: Open-Meteo</span>
+            </footer>
+
+        </section>
+
+        <footer class="page-footer">
+            <p>Diseñado para explorar el mundo, una ciudad a la vez.</p>
+            <p>Proyecto académico · IAW ·
+                <span id="student-name">KHS</span>
+            </p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
